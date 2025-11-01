@@ -344,4 +344,5 @@ st.markdown(f"### 🔢 Gesamt: AEC={len(all_aec)}, Hämatoxylin={len(all_hema)}"
 
 # -------------------- CSV Export --------------------
 df_list = [{"X_display": x, "Y_display": y, "Type": "AEC"} for (x, y) in all_aec] + \
-          [{"X_display": x, "Y_display": y, "Type": "Hämatoxylin"} for (
+          [{"X_display": x, "Y_display": y, "Type": "Hämatoxylin"} for (x, y) in all_hema]
+
