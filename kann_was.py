@@ -255,10 +255,10 @@ if coords:
         st.session_state.bg_hsv = compute_hsv_range([(x, y)], hsv_disp)
         st.success("✅ Hintergrund-Kalibrierung durchgeführt.")
     elif manual_aec_mode:
-    st.session_state.manual_aec.append((x, y))
-    new_hsv = compute_hsv_range([(x, y)], hsv_disp, radius=analysis_radius)
-    st.session_state.aec_hsv = merge_hsv_ranges(st.session_state.aec_hsv, new_hsv)
-    st.success("✅ AEC-Bereich erweitert.")
+        st.session_state.manual_aec.append((x, y))
+        new_hsv = compute_hsv_range([(x, y)], hsv_disp, radius=analysis_radius)
+        st.session_state.aec_hsv = merge_hsv_ranges(st.session_state.aec_hsv, new_hsv)
+        st.success("✅ AEC-Bereich erweitert.")
     elif manual_hema_mode:
         st.session_state.manual_hema.append((x, y))
 
