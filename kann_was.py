@@ -50,13 +50,12 @@ def get_centers(mask, min_area=50):
                 centers.append((cx, cy))
     return centers
 
-def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25):
+def compute_hsv_range(points, hsv_img, radius=3, buffer_h=8, buffer_s=30, buffer_v=25):
     """
     Berechnet robusten HSV-Bereich um mehrere Punkte herum.
     Gibt (h_min, h_max, s_min, s_max, v_min, v_max) oder None zurück.
     """
-    radius = 3
-
+    
     if not points:
         return None
 
@@ -264,43 +263,6 @@ if coords:
 
 for k in ["aec_points", "hema_points", "bg_points", "manual_aec", "manual_hema"]:
     st.session_state[k] = dedup_points(st.session_state[k], min_dist=max(4, circle_radius // 2))
-
-# -------------------- Kalibrierung --------------------
-st.markdown("### ⚙️ Kalibrierung")
-col_cal1, col_cal2, col_cal3 = st.columns(3)
-with col_cal1:
-    if st.button("⚡ AEC kalibrieren"):
-        if st.session_state.aec_points:
-            st.session_state.aec_hsv = compute_hsv_range(st.session_state.aec_points, hsv_disp)
-            st.session_state.aec_points = []
-            st.success("✅ AEC-Kalibrierung gespeichert.")
-        else:
-            st.warning("⚠️ Keine AEC-Punkte vorhanden.")
-with col_cal2:
-    if st.button("⚡ Hämatoxylin kalibrieren"):
-        if st.session_state.hema_points:
-            st.session_state.hema_hsv = compute_hsv_range(st.session_state.hema_points, hsv_disp)
-            st.session_state.hema_points = []
-            st.success("✅ Hämatoxylin-Kalibrierung gespeichert.")
-        else:
-            st.warning("⚠️ Keine Hämatoxylin-Punkte vorhanden.")
-with col_cal3:
-    if st.button("⚡ Hintergrund kalibrieren"):
-        if st.session_state.bg_points:
-            st.session_state.bg_hsv = compute_hsv_range(st.session_state.bg_points, hsv_disp)
-            st.session_state.bg_points = []
-            st.success("✅ Hintergrund-Kalibrierung gespeichert.")
-        else:
-            st.warning("⚠️ Keine Hintergrund-Punkte vorhanden.")
-
-st.markdown("### 💾 Kalibrierung speichern/laden")
-col_save, col_load = st.columns(2)
-with col_save:
-    if st.button("💾 Letzte Kalibrierung speichern"):
-        save_last_calibration()
-with col_load:
-    if st.button("📂 Letzte Kalibrierung laden"):
-        load_last_calibration()
 
 # -------------------- Auto-Erkennung --------------------
 if st.session_state.last_auto_run > 0:
