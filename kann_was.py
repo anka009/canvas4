@@ -431,3 +431,4 @@ with st.expander("🧠 Debug Info"):
         "bg_points": st.session_state.bg_points,
         "last_auto_run": st.session_state.last_auto_run
     })
+ 
