@@ -8,19 +8,6 @@ import pandas as pd
 import json
 
 # -------------------- Hilfsfunktionen --------------------
-def merge_hsv_ranges(old, new):
-    """Kombiniert zwei HSV-Bereiche zu einem größeren Bereich."""
-    if old is None:
-        return new
-    if new is None:
-        return old
-    hmin = min(old[0], new[0])
-    hmax = max(old[1], new[1])
-    smin = min(old[2], new[2])
-    smax = max(old[3], new[3])
-    vmin = min(old[4], new[4])
-    vmax = max(old[5], new[5])
-    return (hmin, hmax, smin, smax, vmin, vmax)
 def is_near(p1, p2, r=10):
     return np.linalg.norm(np.array(p1) - np.array(p2)) < r
 
@@ -189,7 +176,6 @@ with col2:
     alpha = st.slider("🌗 Alpha (Kontrast)", 0.1, 3.0, 1.0, step=0.1)
 with col3:
     circle_radius = st.slider("⚪ Kreisradius (Display-Px)", 1, 20, 5)
-analysis_radius = st.slider("🔍 Analyse-Radius für HSV-Auswertung (Pixel)", 1, 20, 3)
 
 # -------------------- Modi --------------------
 st.markdown("### 🎨 Modus auswählen")
@@ -255,14 +241,39 @@ if coords:
         st.success("✅ Hintergrund-Kalibrierung durchgeführt.")
     elif manual_aec_mode:
         st.session_state.manual_aec.append((x, y))
-        new_hsv = compute_hsv_range([(x, y)], hsv_disp, radius=analysis_radius)
-        st.session_state.aec_hsv = merge_hsv_ranges(st.session_state.aec_hsv, new_hsv)
-        st.success("✅ AEC-Bereich erweitert.")
     elif manual_hema_mode:
         st.session_state.manual_hema.append((x, y))
 
 for k in ["aec_points", "hema_points", "bg_points", "manual_aec", "manual_hema"]:
     st.session_state[k] = dedup_points(st.session_state[k], min_dist=max(4, circle_radius // 2))
+
+# -------------------- Kalibrierung --------------------
+st.markdown("### ⚙️ Kalibrierung")
+col_cal1, col_cal2, col_cal3 = st.columns(3)
+with col_cal1:
+    if st.button("⚡ AEC kalibrieren"):
+        if st.session_state.aec_points:
+            st.session_state.aec_hsv = compute_hsv_range(st.session_state.aec_points, hsv_disp)
+            st.session_state.aec_points = []
+            st.success("✅ AEC-Kalibrierung gespeichert.")
+        else:
+            st.warning("⚠️ Keine AEC-Punkte vorhanden.")
+with col_cal2:
+    if st.button("⚡ Hämatoxylin kalibrieren"):
+        if st.session_state.hema_points:
+            st.session_state.hema_hsv = compute_hsv_range(st.session_state.hema_points, hsv_disp)
+            st.session_state.hema_points = []
+            st.success("✅ Hämatoxylin-Kalibrierung gespeichert.")
+        else:
+            st.warning("⚠️ Keine Hämatoxylin-Punkte vorhanden.")
+with col_cal3:
+    if st.button("⚡ Hintergrund kalibrieren"):
+        if st.session_state.bg_points:
+            st.session_state.bg_hsv = compute_hsv_range(st.session_state.bg_points, hsv_disp)
+            st.session_state.bg_points = []
+            st.success("✅ Hintergrund-Kalibrierung gespeichert.")
+        else:
+            st.warning("⚠️ Keine Hintergrund-Punkte vorhanden.")
 
 # -------------------- Auto-Erkennung --------------------
 if st.session_state.last_auto_run > 0:
@@ -325,4 +336,3 @@ st.markdown(f"### 🔢 Gesamt: AEC={len(all_aec)}, Hämatoxylin={len(all_hema)}"
 # -------------------- CSV Export --------------------
 df_list = [{"X_display": x, "Y_display": y, "Type": "AEC"} for (x, y) in all_aec] + \
           [{"X_display": x, "Y_display": y, "Type": "Hämatoxylin"} for (x, y) in all_hema]
-
