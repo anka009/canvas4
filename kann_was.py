@@ -8,6 +8,8 @@ import pandas as pd
 import json
 import numpy as np
 
+radius = st.slider("Analyse-Radius (Pixel)", min_value=1, max_value=20, value=5)
+
 # -------------------- Hilfsfunktionen --------------------
 def is_near(p1, p2, r=10):
     return np.linalg.norm(np.array(p1) - np.array(p2)) < r
