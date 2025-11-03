@@ -8,6 +8,19 @@ import pandas as pd
 import json
 
 # -------------------- Hilfsfunktionen --------------------
+def merge_hsv_ranges(old, new):
+    """Kombiniert zwei HSV-Bereiche zu einem größeren Bereich."""
+    if old is None:
+        return new
+    if new is None:
+        return old
+    hmin = min(old[0], new[0])
+    hmax = max(old[1], new[1])
+    smin = min(old[2], new[2])
+    smax = max(old[3], new[3])
+    vmin = min(old[4], new[4])
+    vmax = max(old[5], new[5])
+    return (hmin, hmax, smin, smax, vmin, vmax)
 def is_near(p1, p2, r=10):
     return np.linalg.norm(np.array(p1) - np.array(p2)) < r
 
@@ -37,7 +50,7 @@ def get_centers(mask, min_area=50):
                 centers.append((cx, cy))
     return centers
 
-def compute_hsv_range(points, hsv_img, radius=3, buffer_h=8, buffer_s=30, buffer_v=25):
+def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25):
     """
     Berechnet robusten HSV-Bereich um mehrere Punkte herum.
     Gibt (h_min, h_max, s_min, s_max, v_min, v_max) oder None zurück.
@@ -177,6 +190,7 @@ with col2:
     alpha = st.slider("🌗 Alpha (Kontrast)", 0.1, 3.0, 1.0, step=0.1)
 with col3:
     circle_radius = st.slider("⚪ Kreisradius (Display-Px)", 1, 20, 5)
+analysis_radius = st.slider("🔍 Analyse-Radius für HSV-Auswertung (Pixel)", 1, 20, 3)
 
 # -------------------- Modi --------------------
 st.markdown("### 🎨 Modus auswählen")
@@ -241,7 +255,10 @@ if coords:
         st.session_state.bg_hsv = compute_hsv_range([(x, y)], hsv_disp)
         st.success("✅ Hintergrund-Kalibrierung durchgeführt.")
     elif manual_aec_mode:
-        st.session_state.manual_aec.append((x, y))
+    st.session_state.manual_aec.append((x, y))
+    new_hsv = compute_hsv_range([(x, y)], hsv_disp, radius=analysis_radius)
+    st.session_state.aec_hsv = merge_hsv_ranges(st.session_state.aec_hsv, new_hsv)
+    st.success("✅ AEC-Bereich erweitert.")
     elif manual_hema_mode:
         st.session_state.manual_hema.append((x, y))
 
