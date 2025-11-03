@@ -42,7 +42,7 @@ def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25):
     Berechnet robusten HSV-Bereich um mehrere Punkte herum.
     Gibt (h_min, h_max, s_min, s_max, v_min, v_max) oder None zurück.
     """
-    circle_radius = st.slider("⚪ Kreisradius (Display-Px)", 1, 20, 3)
+    radius = 3
 
     if not points:
         return None
@@ -176,7 +176,7 @@ with col1:
 with col2:
     alpha = st.slider("🌗 Alpha (Kontrast)", 0.1, 3.0, 1.0, step=0.1)
 with col3:
-    circle_radius = st.slider("⚪ Kreisradius (Display-Px)", 1, 20, 3)
+    circle_radius = st.slider("⚪ Kreisradius (Display-Px)", 1, 20, 5)
 
 # -------------------- Modi --------------------
 st.markdown("### 🎨 Modus auswählen")
