@@ -41,8 +41,7 @@ def get_centers(mask, min_area=50):
                 centers.append((cx, cy))
     return centers
 
-def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25):
-    radius = st.slider("Analyse-Radius (Pixel)", min_value=1, max_value=20, value=3)
+def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25, radius=5):
     if not points:
         return None
 
@@ -52,23 +51,22 @@ def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25):
         x_max = min(hsv_img.shape[1], x + radius + 1)
         y_min = max(0, y - radius)
         y_max = min(hsv_img.shape[0], y + radius + 1)
-
         region = hsv_img[y_min:y_max, x_min:x_max]
-        vals.append(region.reshape(-1, 3))  # alle HSV-Werte in der Region
+        vals.append(region.reshape(-1, 3))
 
-        vals = np.vstack(vals)
-        h = vals[:, 0].astype(int)
-        s = vals[:, 1].astype(int)
-        v = vals[:, 2].astype(int)
+    vals = np.vstack(vals)
+    h = vals[:, 0].astype(int)
+    s = vals[:, 1].astype(int)
+    v = vals[:, 2].astype(int)
 
-        h_min = max(0, np.min(h) - buffer_h)
-        h_max = min(180, np.max(h) + buffer_h)
-        s_min = max(0, np.min(s) - buffer_s)
-        s_max = min(255, np.max(s) + buffer_s)
-        v_min = max(0, np.min(v) - buffer_v)
-        v_max = min(255, np.max(v) + buffer_v)
+    h_min = max(0, np.min(h) - buffer_h)
+    h_max = min(180, np.max(h) + buffer_h)
+    s_min = max(0, np.min(s) - buffer_s)
+    s_max = min(255, np.max(s) + buffer_s)
+    v_min = max(0, np.min(v) - buffer_v)
+    v_max = min(255, np.max(v) + buffer_v)
 
-        return (h_min, h_max, s_min, s_max, v_min, v_max)
+    return (h_min, h_max), (s_min, s_max), (v_min, v_max)
 
 
 def apply_hue_wrap(hsv_img, hmin, hmax, smin, smax, vmin, vmax):
