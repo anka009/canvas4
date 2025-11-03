@@ -37,7 +37,7 @@ def get_centers(mask, min_area=50):
                 centers.append((cx, cy))
     return centers
 
-def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25):
+def compute_hsv_range(points, hsv_img, radius=3, buffer_h=8, buffer_s=30, buffer_v=25):
     """
     Berechnet robusten HSV-Bereich um mehrere Punkte herum.
     Gibt (h_min, h_max, s_min, s_max, v_min, v_max) oder None zurück.
