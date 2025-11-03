@@ -41,7 +41,7 @@ def get_centers(mask, min_area=50):
                 centers.append((cx, cy))
     return centers
 
-def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25, radius=5):
+def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25, radius=3):
     if not points:
         return None
 
