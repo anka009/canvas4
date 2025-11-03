@@ -8,8 +8,6 @@ import pandas as pd
 import json
 import numpy as np
 
-radius = st.slider("Analyse-Radius (Pixel)", min_value=1, max_value=20, value=5)
-
 # -------------------- Hilfsfunktionen --------------------
 def is_near(p1, p2, r=10):
     return np.linalg.norm(np.array(p1) - np.array(p2)) < r
@@ -106,6 +104,7 @@ def load_last_calibration():
 # -------------------- Streamlit Setup --------------------
 st.set_page_config(page_title="Zellkern-Zähler (fixed)", layout="wide")
 st.title("🧬 Zellkern-Zähler – stabilisierte Version")
+radius = st.slider("Analyse-Radius (Pixel)", min_value=1, max_value=20, value=3)
 
 # -------------------- Session State --------------------
 default_keys = [
