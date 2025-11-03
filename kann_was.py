@@ -40,7 +40,7 @@ def get_centers(mask, min_area=50):
     return centers
 
 def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25):
-    radius = 5  # fester Radius in Pixeln
+    radius = st.slider("Analyse-Radius (Pixel)", min_value=1, max_value=20, value=3)
     if not points:
         return None
 
