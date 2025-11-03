@@ -45,7 +45,7 @@ def compute_hsv_range(points, hsv_img, buffer_h=8, buffer_s=30, buffer_v=25):
     circle_radius = st.slider("⚪ Kreisradius (Display-Px)", 1, 20, 3)
 
     if not points:
-    return None
+        return None
 
     vals = []
     for (x, y) in points:
