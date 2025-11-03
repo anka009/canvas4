@@ -42,7 +42,8 @@ def compute_hsv_range(points, hsv_img, radius=3, buffer_h=8, buffer_s=30, buffer
     Berechnet robusten HSV-Bereich um mehrere Punkte herum.
     Gibt (h_min, h_max, s_min, s_max, v_min, v_max) oder None zurück.
     """
-    
+    radius = 3
+
     if not points:
         return None
 
@@ -274,6 +275,15 @@ with col_cal3:
             st.success("✅ Hintergrund-Kalibrierung gespeichert.")
         else:
             st.warning("⚠️ Keine Hintergrund-Punkte vorhanden.")
+
+st.markdown("### 💾 Kalibrierung speichern/laden")
+col_save, col_load = st.columns(2)
+with col_save:
+    if st.button("💾 Letzte Kalibrierung speichern"):
+        save_last_calibration()
+with col_load:
+    if st.button("📂 Letzte Kalibrierung laden"):
+        load_last_calibration()
 
 # -------------------- Auto-Erkennung --------------------
 if st.session_state.last_auto_run > 0:
