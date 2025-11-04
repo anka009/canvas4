@@ -163,7 +163,7 @@ def load_last_calibration(filename="kalibrierung.json"):
         st.session_state.hema_hsv = np.array(data.get("hema_hsv")) if data.get("hema_hsv") else None
         st.session_state.bg_hsv = np.array(data.get("bg_hsv")) if data.get("bg_hsv") else None
         st.success("✅ Letzte Kalibrierung geladen. Die Ansicht wird neu geladen.")
-        try:
+    try:
         st.rerun()
     except AttributeError:
         st.experimental_rerun()
