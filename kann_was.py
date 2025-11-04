@@ -147,7 +147,6 @@ def save_last_calibration(filename="kalibrierung.json"):
     except Exception as e:
         st.error(f"Fehler beim Speichern: {e}")
 
-
 def load_last_calibration(filename="kalibrierung.json"):
     """Lädt Kalibrierung und konvertiert zurück in numpy arrays (oder None).
     Nach Laden wird ein Rerun getriggert, damit die Werte sofort sichtbar werden."""
@@ -163,10 +162,10 @@ def load_last_calibration(filename="kalibrierung.json"):
         st.session_state.hema_hsv = np.array(data.get("hema_hsv")) if data.get("hema_hsv") else None
         st.session_state.bg_hsv = np.array(data.get("bg_hsv")) if data.get("bg_hsv") else None
         st.success("✅ Letzte Kalibrierung geladen. Die Ansicht wird neu geladen.")
-    try:
-        st.rerun()
-    except AttributeError:
-        st.experimental_rerun()
+        try:
+            st.rerun()
+        except AttributeError:
+            st.experimental_rerun()
     except Exception as e:
         st.error(f"Fehler beim Laden der Kalibrierung: {e}")
 
