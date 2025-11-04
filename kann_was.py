@@ -294,9 +294,9 @@ if st.sidebar.button("🧾 Kalibrierung zurücksetzen", key="btn_reset_calib"):
 if st.sidebar.button("🤖 Auto-Erkennung ausführen", key="btn_auto_run"):
     st.session_state.last_auto_run = (st.session_state.last_auto_run or 0) + 1
     try:
-    st.rerun()
-except AttributeError:
-    st.experimental_rerun()
+        st.rerun()
+    except AttributeError:
+        st.experimental_rerun()
 
 
 # -------------------- Kalibrierung speichern/laden --------------------
