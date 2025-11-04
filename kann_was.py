@@ -291,7 +291,7 @@ if st.sidebar.button("🧾 Kalibrierung zurücksetzen", key="btn_reset_calib"):
 # Auto-Run: inkrementiere und rerun, damit Ergebnis sofort sichtbar ist
 if st.sidebar.button("🤖 Auto-Erkennung ausführen", key="btn_auto_run"):
     st.session_state.last_auto_run = (st.session_state.last_auto_run or 0) + 1
-    st.experimental_rerun()
+    st.rerun()
 
 # -------------------- Kalibrierung speichern/laden --------------------
 st.sidebar.markdown("### 💾 Kalibrierung")
