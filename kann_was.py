@@ -167,7 +167,6 @@ def load_last_calibration(filename="kalibrierung.json"):
         st.rerun()
     except AttributeError:
         st.experimental_rerun()
-
     except Exception as e:
         st.error(f"Fehler beim Laden der Kalibrierung: {e}")
 
