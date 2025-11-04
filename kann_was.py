@@ -129,21 +129,23 @@ import streamlit as st
 
 # -------------------- Kalibrierung speichern --------------------
 def save_last_calibration(filename="kalibrierung.json"):
-    """Speichert aktuelle Kalibrierungswerte in JSON."""
-    data = {
-        "aec_hsv": st.session_state.get("aec_hsv").tolist() if st.session_state.get("aec_hsv") is not None else None,
-        "hema_hsv": st.session_state.get("hema_hsv").tolist() if st.session_state.get("hema_hsv") is not None else None,
-        "bg_hsv": st.session_state.get("bg_hsv").tolist() if st.session_state.get("bg_hsv") is not None else None
-    }
+    """Speichert die aktuelle Kalibrierung sicher in JSON."""
+    data = {}
+    for key in ["aec_hsv", "hema_hsv", "bg_hsv"]:
+        val = st.session_state.get(key)
+        if isinstance(val, np.ndarray):
+            data[key] = val.tolist()
+        elif isinstance(val, list):
+            data[key] = val
+        else:
+            data[key] = None
 
-    path = Path(filename)
     try:
-        with path.open("w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
-        st.success(f"💾 Kalibrierung gespeichert in {filename}.")
-        st.write(data)  # Debug: zeigt was gespeichert wurde
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(data, f)
+        st.success("💾 Kalibrierung gespeichert.")
     except Exception as e:
-        st.error(f"❌ Fehler beim Speichern: {e}")
+        st.error(f"Fehler beim Speichern der Kalibrierung: {e}")
 
 # -------------------- Kalibrierung laden --------------------
 def load_last_calibration(filename="kalibrierung.json"):
