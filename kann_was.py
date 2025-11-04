@@ -122,48 +122,56 @@ def remove_near(points, forbidden_points, r):
         return points
     return [p for p in points if not any(is_near(p, q, r) for q in forbidden_points)]
 
+from pathlib import Path
+import json
+import numpy as np
+import streamlit as st
 
+# -------------------- Kalibrierung speichern --------------------
 def save_last_calibration(filename="kalibrierung.json"):
-    """Speichert aec/hema/bg HSV in JSON (konvertiert numpy -> list)."""
-    def safe_list(val):
-        if isinstance(val, np.ndarray):
-            return val.tolist()
-        elif isinstance(val, list):
-            return val
-        else:
-            return None
-
+    """Speichert aktuelle Kalibrierungswerte in JSON."""
     data = {
-        "aec_hsv": safe_list(st.session_state.get("aec_hsv")),
-        "hema_hsv": safe_list(st.session_state.get("hema_hsv")),
-        "bg_hsv": safe_list(st.session_state.get("bg_hsv"))
+        "aec_hsv": st.session_state.get("aec_hsv").tolist() if st.session_state.get("aec_hsv") is not None else None,
+        "hema_hsv": st.session_state.get("hema_hsv").tolist() if st.session_state.get("hema_hsv") is not None else None,
+        "bg_hsv": st.session_state.get("bg_hsv").tolist() if st.session_state.get("bg_hsv") is not None else None
     }
 
     path = Path(filename)
     try:
         with path.open("w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False)
-        st.success("💾 Kalibrierung gespeichert.")
+            json.dump(data, f, indent=2)
+        st.success(f"💾 Kalibrierung gespeichert in {filename}.")
+        st.write(data)  # Debug: zeigt was gespeichert wurde
     except Exception as e:
-        st.error(f"Fehler beim Speichern: {e}")
+        st.error(f"❌ Fehler beim Speichern: {e}")
 
-def load_last_calibration():
-    """Lädt Kalibrierung und konvertiert zurück in numpy arrays (oder None)."""
+# -------------------- Kalibrierung laden --------------------
+def load_last_calibration(filename="kalibrierung.json"):
+    """Lädt Kalibrierung aus JSON und setzt Session State.
+    Löst automatisch die Anzeige/AEC-Erkennung aus."""
+    path = Path(filename)
+    if not path.exists():
+        st.warning(f"⚠️ Datei {filename} nicht gefunden.")
+        return
+
     try:
-        with open("kalibrierung.json", "r") as f:
+        with path.open("r", encoding="utf-8") as f:
             data = json.load(f)
 
-        # sichere Konvertierung in np.array oder None
+        # Setze Session State
         st.session_state.aec_hsv = np.array(data["aec_hsv"]) if data.get("aec_hsv") else None
         st.session_state.hema_hsv = np.array(data["hema_hsv"]) if data.get("hema_hsv") else None
         st.session_state.bg_hsv = np.array(data["bg_hsv"]) if data.get("bg_hsv") else None
 
-        # Trigger für Auto-Erkennung setzen, falls du die Masken sofort sehen willst
+        # Trigger Auto-Erkennung / Anzeige
         st.session_state.last_auto_run = 1
 
-        st.success("✅ Letzte Kalibrierung geladen.")
-    except FileNotFoundError:
-        st.warning("⚠️ Keine gespeicherte Kalibrierung gefunden.")
+        st.success(f"✅ Kalibrierung geladen aus {filename}.")
+        st.write({
+            "aec_hsv": st.session_state.aec_hsv,
+            "hema_hsv": st.session_state.hema_hsv,
+            "bg_hsv": st.session_state.bg_hsv
+        })  # Debug: zeigt die geladenen Werte
     except Exception as e:
         st.error(f"❌ Fehler beim Laden der Kalibrierung: {e}")
 
