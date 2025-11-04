@@ -147,25 +147,25 @@ def save_last_calibration(filename="kalibrierung.json"):
     except Exception as e:
         st.error(f"Fehler beim Speichern: {e}")
 
-
-def load_last_calibration(filename="kalibrierung.json"):
-    """Lädt Kalibrierung und konvertiert zurück in numpy arrays (oder None).
-    Nach Laden wird ein Rerun getriggert, damit die Werte sofort sichtbar werden."""
-    path = Path(filename)
-    if not path.exists():
-        st.warning("⚠️ Keine gespeicherte Kalibrierung gefunden.")
-        return
-
+def load_last_calibration():
+    """Lädt Kalibrierung und konvertiert zurück in numpy arrays (oder None)."""
     try:
-        with path.open("r", encoding="utf-8") as f:
+        with open("kalibrierung.json", "r") as f:
             data = json.load(f)
-        st.session_state.aec_hsv = np.array(data.get("aec_hsv")) if data.get("aec_hsv") else None
-        st.session_state.hema_hsv = np.array(data.get("hema_hsv")) if data.get("hema_hsv") else None
-        st.session_state.bg_hsv = np.array(data.get("bg_hsv")) if data.get("bg_hsv") else None
-        st.success("✅ Letzte Kalibrierung geladen. Die Ansicht wird neu geladen.")
-        st.rerun()
+
+        # sichere Konvertierung in np.array oder None
+        st.session_state.aec_hsv = np.array(data["aec_hsv"]) if data.get("aec_hsv") else None
+        st.session_state.hema_hsv = np.array(data["hema_hsv"]) if data.get("hema_hsv") else None
+        st.session_state.bg_hsv = np.array(data["bg_hsv"]) if data.get("bg_hsv") else None
+
+        # Trigger für Auto-Erkennung setzen, falls du die Masken sofort sehen willst
+        st.session_state.last_auto_run = 1
+
+        st.success("✅ Letzte Kalibrierung geladen.")
+    except FileNotFoundError:
+        st.warning("⚠️ Keine gespeicherte Kalibrierung gefunden.")
     except Exception as e:
-        st.error(f"Fehler beim Laden der Kalibrierung: {e}")
+        st.error(f"❌ Fehler beim Laden der Kalibrierung: {e}")
 
 
 # -------------------- Streamlit Setup --------------------
