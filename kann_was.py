@@ -163,7 +163,11 @@ def load_last_calibration(filename="kalibrierung.json"):
         st.session_state.hema_hsv = np.array(data.get("hema_hsv")) if data.get("hema_hsv") else None
         st.session_state.bg_hsv = np.array(data.get("bg_hsv")) if data.get("bg_hsv") else None
         st.success("✅ Letzte Kalibrierung geladen. Die Ansicht wird neu geladen.")
+        try:
+        st.rerun()
+    except AttributeError:
         st.experimental_rerun()
+
     except Exception as e:
         st.error(f"Fehler beim Laden der Kalibrierung: {e}")
 
@@ -291,7 +295,11 @@ if st.sidebar.button("🧾 Kalibrierung zurücksetzen", key="btn_reset_calib"):
 # Auto-Run: inkrementiere und rerun, damit Ergebnis sofort sichtbar ist
 if st.sidebar.button("🤖 Auto-Erkennung ausführen", key="btn_auto_run"):
     st.session_state.last_auto_run = (st.session_state.last_auto_run or 0) + 1
+    try:
+    st.rerun()
+except AttributeError:
     st.experimental_rerun()
+
 
 # -------------------- Kalibrierung speichern/laden --------------------
 st.sidebar.markdown("### 💾 Kalibrierung")
